@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA 数据分析 - 勒布朗·詹姆斯</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a1a1a;
+            --secondary-color: #2d2d2d;
+            --accent-color: #e6194b;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--secondary-color);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background: var(--primary-color);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+        }
+
+        .plot-container {
+            padding: 2rem;
+        }
+
+        .plotly-graph-div {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .vs-text {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                margin-bottom: 1rem;
+            }
+
+            .plot-container {
+                padding: 1rem;
+            }
+        }
+
+        /* 隐藏默认显示的图表 */
+        #todayStatsChart,
+        #seasonScoreChart {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="text-center mb-5">勒布朗·詹姆斯 数据看板</h1>
+
+        <!-- 展开当日数据按钮 -->
+        <button type="button" class="btn btn-primary mb-3" onclick="toggleChart('todayStatsChart')">展开当日数据</button>
+        <div id="todayStatsChart">
+            {{ bar_chart|safe }}
+        </div>
+
+        <!-- 展开赛季得分趋势按钮 -->
+        <button type="button" class="btn btn-primary mb-3" onclick="toggleChart('seasonScoreChart')">展开赛季得分趋势</button>
+        <div id="seasonScoreChart">
+            {{ line_chart|safe }}
+        </div>
+    </div>
+
+    <script>
+        function toggleChart(chartId) {
+            var chart = document.getElementById(chartId);
+            if (chart.style.display === 'none') {
+                chart.style.display = 'block';
+            } else {
+                chart.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+
+</html>
