@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA 数据分析 - {{ player_name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            --card-gradient: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+            --accent-color: #00f0ff;
+            --neon-blue: #00f0ff;
+            --neon-pink: #ff00ff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* 粒子背景容器 */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient);
+            z-index: -1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            padding: 2rem 0;
+        }
+
+        /* 科幻风格按钮组 */
+        .button-group {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .neon-button {
+            background: var(--card-gradient);
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 0.8rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            font-weight: 600;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+        }
+
+        .neon-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px var(--neon-blue);
+        }
+
+        .neon-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--neon-pink);
+            z-index: -1;
+            transition: opacity 0.3s;
+            opacity: 0;
+        }
+
+        .neon-button:active::before {
+            opacity: 0.3;
+        }
+
+        /* 卡片样式升级 */
+        .data-card {
+            background: var(--card-gradient);
+            border: 2px solid var(--accent-color);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            transition: transform 0.3s;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+
+        .data-card:hover {
+            transform: translateX(10px);
+        }
+
+        .data-card h3 {
+            color: var(--neon-blue);
+            border-bottom: 2px solid var(--neon-pink);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* 下拉选择框样式 */
+        .game-selector {
+            background: var(--card-gradient);
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 0.8rem;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .game-selector:hover {
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        .game-selector option {
+            background: #1a1a1a;
+            color: var(--accent-color);
+        }
+
+        /* 返回按钮样式 */
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: var(--card-gradient);
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            transform: translateX(5px);
+            box-shadow: 0 0 15px var(--neon-blue);
+            color: var(--accent-color);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .neon-button {
+                width: 100%;
+                margin: 0.5rem 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 粒子背景 -->
+    <div id="particles-js"></div>
+
+    <!-- 返回按钮 -->
+    <a href="{{ url_for('index') }}" class="back-button">返回选择</a>
+
+    <div class="container">
+        <h1 class="text-center mb-5" style="
+            color: var(--neon-blue);
+            text-shadow: 0 0 15px var(--neon-pink);
+            font-size: 2.5rem;
+        ">{{ player_name }} 数据看板</h1>
+
+        <!-- 比赛选择器 -->
+        <select class="game-selector" id="gameSelector">
+            {% for game in games %}
+            <option value="{{ game.date }}">{{ game.date }} vs {{ game.opponent }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- 按钮组 -->
+        <div class="button-group">
+            <button class="neon-button" onclick="toggleChart('todayStatsChart')">比赛数据</button>
+            <button class="neon-button" onclick="toggleChart('seasonScoreChart')">赛季趋势</button>
+        </div>
+
+        <!-- 数据容器 -->
+        <div class="data-card" style="display: none;">
+            <div id="todayStatsChart"></div>
+        </div>
+
+        <div class="data-card" style="display: none;">
+            <div id="seasonScoreChart" style="width: 100%; height: 400px; display: flex; justify-content: center; align-items: center;">
+                {{ line_chart|safe }}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化粒子背景
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: ["#00f0ff", "#ff00ff", "#00ff00"] },
+                shape: { type: "circle" },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                line_linked: { enable: false },
+                move: { enable: true, speed: 2, direction: "none" }
+            },
+            interactivity: { detect_on: "canvas" },
+            retina_detect: true
+        });
+
+        // 图表切换功能
+        function toggleChart(chartId) {
+            const todayStatsContainer = document.querySelector('#todayStatsChart').parentElement;
+            const seasonScoreContainer = document.querySelector('#seasonScoreChart').parentElement;
+            
+            if (chartId === 'todayStatsChart') {
+                todayStatsContainer.style.display = 'block';
+                seasonScoreContainer.style.display = 'none';
+            } else {
+                todayStatsContainer.style.display = 'none';
+                seasonScoreContainer.style.display = 'block';
+            }
+        }
+
+        // 加载比赛数据
+        function loadGameData(date) {
+            const playerId = window.location.pathname.split('/')[2];  // 获取当前球员ID
+            
+            // 确保比赛数据图表可见
+            document.querySelector('#todayStatsChart').parentElement.style.display = 'block';
+            document.querySelector('#seasonScoreChart').parentElement.style.display = 'none';
+            
+            fetch(`/get_game_stats/${playerId}?date=${date}`)
+                .then(response => response.json())
+                .then(data => {
+                    const chartContainer = document.querySelector('#todayStatsChart');
+                    // 清空容器
+                    chartContainer.innerHTML = '';
+                    // 使用Plotly.newPlot渲染图表
+                    Plotly.newPlot(chartContainer, JSON.parse(data.chart));
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // 页面加载时自动加载最新比赛数据
+        window.onload = function() {
+            const gameSelector = document.getElementById('gameSelector');
+            // 确保选择器显示最新比赛
+            gameSelector.selectedIndex = 0;
+            // 加载最新比赛数据
+            loadGameData(gameSelector.value);
+        };
+
+        // 比赛选择功能
+        document.getElementById('gameSelector').addEventListener('change', function() {
+            loadGameData(this.value);
+        });
+    </script>
+</body>
+
+</html> 
