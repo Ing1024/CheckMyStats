@@ -20,15 +20,15 @@ data = [('https://nba.hupu.com/players/lebronjames-650.html','data/lebron_james_
 
 # 球员信息
 players = {
-    'lebron_james': {'name': '勒布朗·詹姆斯', 'file': 'data/lebron_james_game_stats.csv'},
-    'victor_wembanyama': {'name': '维克托·文班亚马', 'file': 'data/victor_wembanyama_game_stats.csv'},
-    'luka_doncic': {'name': '卢卡·东契奇', 'file': 'data/luka_doncic_game_stats.csv'},
-    'stephen_curry': {'name': '斯蒂芬·库里', 'file': 'data/stephen_curry_game_stats.csv'},
-    'jimmy_butler': {'name': '吉米·巴特勒', 'file': 'data/jimmy_butler_game_stats.csv'},
-    'shaigilgeousalexander': {'name': '谢伊·吉尔杰斯·亚历山大', 'file': 'data/shaigilgeousalexander_game_stats.csv'},
-    'nikolajokic': {'name': '尼古拉·约基奇', 'file': 'data/nikolajokic_game_stats.csv'},
-    'joel_embiid': {'name': '乔尔·恩比德', 'file': 'data/joel_embiid_game_stats.csv'},
-    'ben_simmons': {'name': '本·西蒙斯', 'file': 'data/ben_simmons_game_stats.csv'}
+    'lebron_james': {'name': '勒布朗·詹姆斯', 'file': 'data/lebron_james_game_stats.csv', 'avatar': '/static/head/lebronjames.png'},
+    'victor_wembanyama': {'name': '维克托·文班亚马', 'file': 'data/victor_wembanyama_game_stats.csv', 'avatar': '/static/head/victorwembanyama.png'},
+    'luka_doncic': {'name': '卢卡·东契奇', 'file': 'data/luka_doncic_game_stats.csv', 'avatar': '/static/head/lukadoncic.png'},
+    'stephen_curry': {'name': '斯蒂芬·库里', 'file': 'data/stephen_curry_game_stats.csv', 'avatar': '/static/head/stephencurry.png'},
+    'jimmy_butler': {'name': '吉米·巴特勒', 'file': 'data/jimmy_butler_game_stats.csv', 'avatar': '/static/head/jimmybutler.png'},
+    'shaigilgeousalexander': {'name': '谢伊·吉尔杰斯·亚历山大', 'file': 'data/shaigilgeousalexander_game_stats.csv', 'avatar': '/static/head/SGA.png'},
+    'nikolajokic': {'name': '尼古拉·约基奇', 'file': 'data/nikolajokic_game_stats.csv', 'avatar': '/static/head/nikolajokic.png'},
+    'joel_embiid': {'name': '乔尔·恩比德', 'file': 'data/joel_embiid_game_stats.csv', 'avatar': '/static/head/joelembiid.png'},
+    'ben_simmons': {'name': '本·西蒙斯', 'file': 'data/ben_simmons_game_stats.csv', 'avatar': '/static/head/bensimmons.png'}
 }
 
 def update_data():
@@ -127,6 +127,7 @@ def player_stats(player_id):
     latest_game = df_sorted.iloc[0]  # 获取最新一场比赛
     return render_template('player_stats.html',
                            player_name=players[player_id]['name'],
+                           player_avatar=players[player_id]['avatar'],
                            bar_chart=create_game_stats_bar_chart(latest_game),
                            line_chart=create_season_score_line_chart(df_sorted),
                            games=games,

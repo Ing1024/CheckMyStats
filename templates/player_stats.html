@@ -153,6 +153,24 @@
             color: var(--accent-color);
         }
 
+        /* 球员头像样式 */
+        .player-avatar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 0 15px var(--neon-blue);
+            overflow: hidden;
+        }
+
+        .player-avatar img {
+            display: block;
+            max-width: none;
+            width: auto;
+            height: auto;
+        }
+
         /* 响应式调整 */
         @media (max-width: 768px) {
             .button-group {
@@ -174,6 +192,11 @@
 
     <!-- 返回按钮 -->
     <a href="{{ url_for('index') }}" class="back-button">返回选择</a>
+
+    <!-- 球员头像 -->
+    <div class="player-avatar">
+        <img src="{{ player_avatar }}" alt="{{ player_name }}">
+    </div>
 
     <div class="container">
         <h1 class="text-center mb-5" style="
